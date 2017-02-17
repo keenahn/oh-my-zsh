@@ -161,40 +161,6 @@ _git-changelog() {
         '(-l --list)'{-l,--list}'[list commits]' \
 }
 
-_git-chore() {
-    local curcontext=$curcontext state line ret=1
-    declare -A opt_args
-
-    _arguments -C \
-        ': :->command' \
-        '*:: :->option-or-argument' && ret=0
-
-    case $state in
-        (command)
-            declare -a commands
-            commands=(
-                'finish:merge and delete the chore branch'
-            )
-            _describe -t commands command commands && ret=0
-            ;;
-        (option-or-argument)
-            curcontext=${curcontext%:*}-$line[1]:
-            case $line[1] in
-                (finish)
-                    _arguments -C \
-                        ':branch-name:__gitex_chore_branch_names'
-                    ;;
-                -r|--remote )
-                    _arguments -C \
-                        ':remote-name:__gitex_remote_names'
-                    ;;
-            esac
-            return 0
-    esac
-
-    _arguments \
-        '(--remote -r)'{--remote,-r}'[setup remote tracking branch]'
-}
 
 
 _git-contrib() {
@@ -229,6 +195,19 @@ _git-create-branch() {
             esac
     esac
 }
+
+
+_git-contrib() {
+    _arguments \
+        ':author:__gitex_author_names'
+}
+
+
+_git-count() {
+    _arguments \
+        '--all[detailed commit count]'
+}
+
 
 _git-delete-branch() {
     _arguments \
@@ -311,6 +290,7 @@ _git-feature() {
     _arguments \
         '(--remote -r)'{--remote,-r}'[setup remote tracking branch]'
 }
+
 
 _git-graft() {
     _arguments \
@@ -495,4 +475,3 @@ zstyle ':completion:*:*:git:*' user-commands $existing_user_commands \
     sync:'sync local branch with remote branch' \
     touch:'touch and add file to the index' \
     undo:'remove latest commits' \
-    unlock:'unlock a file excluded from version control'
