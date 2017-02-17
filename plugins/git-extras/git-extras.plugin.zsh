@@ -114,11 +114,6 @@ _git-changelog() {
         '(-l --list)'{-l,--list}'[list commits]' \
 }
 
-_git-clear() {
-    _arguments \
-        '(-f --force)'{-f,--force}'[force clear]' \
-        '(-h --help)'{-h,--help}'[help message]' \
-}
 
 _git-coauthor() {
     _arguments \
@@ -158,6 +153,19 @@ _git-create-branch() {
             esac
     esac
 }
+
+
+_git-contrib() {
+    _arguments \
+        ':author:__gitex_author_names'
+}
+
+
+_git-count() {
+    _arguments \
+        '--all[detailed commit count]'
+}
+
 
 _git-delete-branch() {
     _arguments \
@@ -246,6 +254,7 @@ _git-feature() {
     _arguments \
         '(--remote -r)'{--remote,-r}'[setup remote tracking branch]'
 }
+
 
 _git-graft() {
     _arguments \
