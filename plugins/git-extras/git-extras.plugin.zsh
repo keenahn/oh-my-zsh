@@ -150,8 +150,16 @@ _git-create-branch() {
                     _arguments -C \
                         ':remote-name:__gitex_remote_names'
                     ;;
+                -r|--remote )
+                    _arguments -C \
+                        ':remote-name:__gitex_remote_names'
+                    ;;
             esac
+            return 0
     esac
+
+    _arguments \
+        '(--remote -r)'{--remote,-r}'[setup remote tracking branch]'
 }
 
 
@@ -166,6 +174,27 @@ _git-count() {
         '--all[detailed commit count]'
 }
 
+_git-create-branch() {
+    local curcontext=$curcontext state line
+    _arguments -C \
+        ': :->command' \
+        '*:: :->option-or-argument'
+
+    case "$state" in
+        (command)
+            _arguments \
+                '(--remote -r)'{--remote,-r}'[setup remote tracking branch]'
+            ;;
+        (option-or-argument)
+            curcontext=${curcontext%:*}-$line[1]:
+            case $line[1] in
+                -r|--remote )
+                    _arguments -C \
+                        ':remote-name:__gitex_remote_names'
+                    ;;
+            esac
+    esac
+}
 
 _git-delete-branch() {
     _arguments \
