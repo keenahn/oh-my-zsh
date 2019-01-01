@@ -179,9 +179,9 @@ prompt_virtualenv() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}❌ "
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡ "
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙ "
+  [[ $RETVAL -ne 0 ]] && symbols+="❌ "
+  [[ $UID -eq 0 ]] && symbols+="⚡ "
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="⚙ "
 
   if [[ -n "$symbols" ]]; then
     prompt_segment NONE default "$symbols" && prompt_end
