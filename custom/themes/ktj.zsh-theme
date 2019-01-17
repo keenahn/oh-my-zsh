@@ -54,10 +54,17 @@ init() {
   zstyle ':vcs_info:*' enable git
   zstyle ':vcs_info:*' get-revision true
   zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:*' stagedstr '✚' # '🍋  '
-  zstyle ':vcs_info:*' unstagedstr '●' # '🍎  '
-  zstyle ':vcs_info:*' formats ' %u%c'
-  zstyle ':vcs_info:*' actionformats ' %u%c'
+  zstyle ':vcs_info:*' stagedstr ' %F{white}✚%f'
+  zstyle ':vcs_info:*' unstagedstr ' %F{white}●%f'
+  # %s The current version control system, like git or svn.
+  # %r The name of the root directory of the repository
+  # %S The current path relative to the repository root directory
+  # %b Branch information, like master
+  # %m In case of Git, show information about stashes
+  # %u Show unstaged changes in the repository
+  # %c Show staged changes in the repository
+  zstyle ':vcs_info:*' formats '%u%c'
+  zstyle ':vcs_info:*' actionformats '%u%c'
 }
 
 
@@ -132,11 +139,6 @@ omz_git_color() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-  local PL_BRANCH_CHAR
-  () {
-    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR='' #'🌱'
-  }
   local ref dirty mode repo_path
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
@@ -155,7 +157,7 @@ prompt_git() {
 
     vcs_info
     omz_git_color
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    echo -n " ${ref/refs\/heads\//}${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
@@ -179,9 +181,9 @@ prompt_virtualenv() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="❌ "
-  [[ $UID -eq 0 ]] && symbols+="⚡ "
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="⚙ "
+  [[ $RETVAL -ne 0 ]] && symbols+="❌"
+  [[ $UID -eq 0 ]] && symbols+="⚡"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="⚙"
 
   if [[ -n "$symbols" ]]; then
     prompt_segment NONE default "$symbols" && prompt_end
