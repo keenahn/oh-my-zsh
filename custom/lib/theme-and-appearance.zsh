@@ -39,7 +39,7 @@ if [[ "$DISABLE_LS_COLORS" != "true" ]]; then
   fi
 fi
 
-setopt auto_cd
+# setopt auto_cd
 setopt multios
 setopt prompt_subst
 

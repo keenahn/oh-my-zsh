@@ -186,7 +186,9 @@ prompt_status() {
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="⚙"
 
   if [[ -n "$symbols" ]]; then
-    prompt_segment NONE default "$symbols" && prompt_end
+    prompt_end
+    echo "$symbols"
+    # prompt_segment NONE default "$symbols" && prompt_end
   else
     prompt_end
   fi
