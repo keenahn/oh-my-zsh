@@ -54,8 +54,8 @@ init() {
   zstyle ':vcs_info:*' enable git
   zstyle ':vcs_info:*' get-revision true
   zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:*' stagedstr ' %F{white}✚%f'
-  zstyle ':vcs_info:*' unstagedstr ' %F{white}●%f'
+  zstyle ':vcs_info:*' stagedstr ' %F{white}✚ %f'
+  zstyle ':vcs_info:*' unstagedstr ' %F{white}● %f'
   # %s The current version control system, like git or svn.
   # %r The name of the root directory of the repository
   # %S The current path relative to the repository root directory
@@ -157,7 +157,7 @@ prompt_git() {
 
     vcs_info
     omz_git_color
-    echo -n " ${ref/refs\/heads\//}${vcs_info_msg_0_%% }${mode}"
+    echo -n " ${ref/refs\/heads\//} ${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
