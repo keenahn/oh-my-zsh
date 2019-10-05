@@ -166,6 +166,12 @@ prompt_dir() {
   prompt_segment NONE blue '%~ ' # '%(5~|%-1~/…/%3~|%4~) '
 }
 
+# prompt_direnv() {
+#   if [[ -n "$DIRENV_DIFF" ]]; then
+#     prompt_segment red white "!"
+#   fi
+# }
+
 # Virtualenv: current working virtualenv
 prompt_virtualenv() {
   local virtualenv_path="$VIRTUAL_ENV"
