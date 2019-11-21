@@ -205,6 +205,19 @@ prompt_time() {
   prompt_segment NONE cyan "%*"
 }
 
+function preexec() {
+  timer=${timer:-$SECONDS}
+}
+
+function precmd() {
+  if [ $timer ]; then
+    timer_show=$(($SECONDS - $timer))
+    export RPROMPT="${timer_show}"
+    unset timer
+  fi
+}
+
+
 ## Main prompt
 build_prompt() {
   RETVAL=$?
