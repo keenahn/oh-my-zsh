@@ -201,6 +201,20 @@ prompt_status() {
 
 }
 
+convertsecs() {
+  ((h=${1}/3600))
+  ((m=(${1}%3600)/60))
+  ((s=${1}%60))
+
+  if (($h > 0)); then;
+    printf "%02d:%02d:%02d" $h $m $s
+  elif (($m > 0)); then;
+    printf "%02d:%02d" $m $s
+  else
+    printf $s
+  fi
+}
+
 prompt_time() {
   prompt_segment NONE cyan "%*"
 }
@@ -212,7 +226,7 @@ function preexec() {
 function precmd() {
   if [ $timer ]; then
     timer_show=$(($SECONDS - $timer))
-    export RPROMPT="${timer_show}"
+    export RPROMPT="${convertsecs timer_show}"
     unset timer
   fi
 }
