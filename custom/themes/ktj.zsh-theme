@@ -226,7 +226,7 @@ function preexec() {
 function precmd() {
   if [ $timer ]; then
     timer_show=$(($SECONDS - $timer))
-    export RPROMPT="${convertsecs timer_show}"
+    export RPROMPT="$(convertsecs $timer_show)"
     unset timer
   fi
 }
