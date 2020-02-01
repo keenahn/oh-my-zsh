@@ -65,6 +65,7 @@ init() {
   # %c Show staged changes in the repository
   zstyle ':vcs_info:*' formats '%u%c'
   zstyle ':vcs_info:*' actionformats '%u%c'
+  zstyle ':vcs_info:*' disable-patterns "${(b)HOME}/s/projects/dotfiles*"
 }
 
 
@@ -140,6 +141,11 @@ omz_git_color() {
 # Git: branch/detached head, dirty status
 prompt_git() {
   local ref dirty mode repo_path
+
+  # TODO: generalize this
+  if [[ $PWD/ = /home/keenahn/s/projects/dotfiles* ]]; then;
+    return
+  fi
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
