@@ -114,7 +114,7 @@ prompt_context() {
     username=$USER
   fi
 
-  prompt_segment NONE NONE "%(%{%F{red}%})%{$fg[magenta]%}$username%{$fg[white]%}@%{$fg[green]%}${hostname}%{$fg[white]%}:"
+  prompt_segment 234 NONE " %(%{%F{red}%})%{$fg[magenta]%}$username%{$fg[white]%}@%{$fg[green]%}${hostname}%{$fg[white]%}:"
 
   # if [[ -n "$SSH_CLIENT" ]]; then
   #   # prompt_segment NONE default "%(!.%{%F{red}%}.)%{$fg_bold{magenta}%}$USER@%{%F{green}%}%m%{%F{default}%}:"
@@ -169,7 +169,7 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment NONE blue '%~' # '%(5~|%-1~/…/%3~|%4~) '
+  prompt_segment 233 blue ' %~ ' # '%(5~|%-1~/…/%3~|%4~) '
 }
 
 # prompt_direnv() {
@@ -222,7 +222,7 @@ convertsecs() {
 }
 
 prompt_time() {
-  prompt_segment NONE cyan " %*"
+  prompt_segment black cyan " %*"
 }
 
 prompt_tmux_window() {
@@ -246,7 +246,7 @@ function precmd() {
 build_prompt() {
   RETVAL=$?
   prompt_virtualenv
-  # prompt_tmux_window
+  prompt_tmux_window
   prompt_context
   prompt_dir
   prompt_time
