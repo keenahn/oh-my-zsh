@@ -47,6 +47,8 @@ DISABLE_AUTO_TITLE=true
   SEGMENT_SEPARATOR=$'\ue0b0'
 }
 
+DISABLE_PATTERNS=("${(b)HOME}/s/projects/dotfiles*" "${(b)HOME}/s/projects/universal-todo*")
+
 init() {
   setopt promptsubst
   autoload -Uz vcs_info
@@ -65,7 +67,7 @@ init() {
   # %c Show staged changes in the repository
   zstyle ':vcs_info:*' formats '%u%c'
   zstyle ':vcs_info:*' actionformats '%u%c'
-  zstyle ':vcs_info:*' disable-patterns "${(b)HOME}/s/projects/dotfiles*"
+  zstyle ':vcs_info:*' disable-patterns $DISABLE_PATTERNS
 }
 
 
@@ -143,7 +145,7 @@ prompt_git() {
   local ref dirty mode repo_path
 
   # TODO: generalize this
-  if [[ $PWD/ = /home/keenahn/s/projects/dotfiles* ]]; then;
+  if [ "${PWD%%/dotfiles*}" != "$PWD" ] ||  [ "${PWD%%/universal-todo*}" != "$PWD" ]; then;
     return
   fi
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
