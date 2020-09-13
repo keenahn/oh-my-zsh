@@ -84,7 +84,7 @@ prompt_segment() {
     echo -n "%{$bg%}%{$fg%}"
   fi
   CURRENT_BG=$1
-  [[ -n $3 ]] && echo -n $3
+  [[ -n $3 ]] && echo -ne $3
 }
 
 # End the prompt, closing any open segments
@@ -206,7 +206,6 @@ prompt_status() {
   else
     prompt_end
   fi
-
 }
 
 convertsecs() {
@@ -231,6 +230,18 @@ prompt_tmux_window() {
   prompt_segment white black "$TMUX_WINDOW"
 }
 
+prompt_node() {
+  root_path=$(git rev-parse --show-toplevel 2>/dev/null)
+  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    if [[ -e "${root_path}/yarn.lock" ]]; then
+      mode="🧶"
+    elif [[ -e "${root_path}/pnpm-lock.yaml" ]]; then
+      mode="🔗"
+    fi
+    echo -ne "$mode"
+  fi
+}
+
 function preexec() {
   timer=${timer:-$SECONDS}
 }
@@ -252,6 +263,7 @@ build_prompt() {
   prompt_context
   prompt_dir
   prompt_time
+  prompt_node
   prompt_git
   prompt_status
 }

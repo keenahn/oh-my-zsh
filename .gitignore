@@ -11,3 +11,5 @@ log/
 lib/directories.zsh
 
 .DS_Store
+
+*.sublime-*
