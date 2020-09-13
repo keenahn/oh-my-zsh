@@ -84,7 +84,7 @@ prompt_segment() {
     echo -n "%{$bg%}%{$fg%}"
   fi
   CURRENT_BG=$1
-  [[ -n $3 ]] && echo -n $3
+  [[ -n $3 ]] && echo -ne $3
 }
 
 # End the prompt, closing any open segments
@@ -170,6 +170,32 @@ prompt_git() {
 }
 
 # Dir: current working directory
+# See: https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html#Shell-state
+#
+# %d
+# %/
+# Current working directory. If an integer follows the ‘%’, it specifies a number
+# of trailing components of the current working directory to show; zero means the
+# whole path. A negative integer specifies leading components, i.e. %-1d specifies the first component.
+#
+# %~
+# As %d and %/, but if the current working directory starts with $HOME, that
+# part is replaced by a ‘~’. Furthermore, if it has a named directory as its prefix,
+# that part is replaced by a ‘~’ followed by the name of the directory, but only if the
+# result is shorter than the full path
+#
+# %(x.true-text.false-text)
+# Specifies a ternary expression.
+# The character following the x is arbitrary; the same character is used to
+# separate the text for the ‘true’ result from that for the ‘false’ result.
+# This separator may not appear in the true-text, except as part of a %-escape sequence. A ‘)’
+# may appear in the false-text as ‘%)’. true-text and false-text may both contain
+# arbitrarily-nested escape sequences, including further ternary expressions.
+#
+# So %(5~|%-1~/…/%3~|%4~) means that if the path has 5 or more segments
+# show the first segment (-1) followed by literal '...', followed by the last 3 segments
+# else, show all segments (%4~)
+
 prompt_dir() {
   prompt_segment NONE blue '%~' # '%(5~|%-1~/…/%3~|%4~) '
 }
@@ -201,12 +227,11 @@ prompt_status() {
 
   if [[ -n "$symbols" ]]; then
     prompt_end
-    echo "$symbols"
+    echo -ne " $symbols"
     # prompt_segment NONE default "$symbols" && prompt_end
   else
     prompt_end
   fi
-
 }
 
 convertsecs() {
@@ -218,19 +243,49 @@ convertsecs() {
     printf "%02d:%02d:%02d" $h $m $s
   elif (($m > 0)); then;
     printf "%02d:%02d" $m $s
-  else
+  elif (($s == 0)); then;
+    printf ""
+  elif (($s > 0)); then;
     printf $s
   fi
 }
 
 prompt_time() {
-  prompt_segment NONE cyan " %*"
+  # See: https://superuser.com/a/943916
+  # prompt_segment NONE cyan " %*"
+  prompt_segment NONE cyan " %D{%H:%M:%S}"
 }
 
 prompt_tmux_window() {
   prompt_segment white black "$TMUX_WINDOW"
 }
 
+prompt_node() {
+  root_path=$(git rev-parse --show-toplevel 2>/dev/null)
+  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    if [[ -e "${root_path}/yarn.lock" ]]; then
+      mode=" 🧶"
+    elif [[ -e "${root_path}/pnpm-lock.yaml" ]]; then
+      mode=" 🔗"
+    fi
+    echo -ne "$mode"
+  fi
+}
+
+prompt_node_version() {
+  if which node &> /dev/null; then
+    echo -ne "%{$fg_bold[green]%}⬢ $(node -v | cut -d'.' -f1 | cut -c2-3)%{$reset_color%}"
+  fi
+}
+
+prompt_seated_db() {
+  SUB='sgpostgres'
+  if [[ "$SEATED_DATABASE_URL" == *"$SUB"* ]]; then
+    echo -ne "%{$fg_bold[red]%}seated prod%{$reset_color%}"
+  fi
+}
+
+# Show the execution time of the last command in the righthand side prompt
 function preexec() {
   timer=${timer:-$SECONDS}
 }
@@ -247,13 +302,16 @@ function precmd() {
 ## Main prompt
 build_prompt() {
   RETVAL=$?
-  prompt_virtualenv
+  # prompt_virtualenv
   # prompt_tmux_window
   prompt_context
   prompt_dir
   prompt_time
+  prompt_node
+  # prompt_node_version
   prompt_git
   prompt_status
+  prompt_seated_db
 }
 
 init
