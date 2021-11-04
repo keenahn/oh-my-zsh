@@ -281,7 +281,9 @@ prompt_node_version() {
 prompt_seated_db() {
   SUB='sgpostgres'
   if [[ "$SEATED_DATABASE_URL" == *"$SUB"* ]]; then
-    echo -ne "%{$fg_bold[red]%}seated prod%{$reset_color%}"
+    # Use nerd fonts if this doesn't  show up
+    # https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
+    echo -ne "%{$fg_bold[red]%} prod%{$reset_color%}"
   fi
 }
 
