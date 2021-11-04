@@ -120,7 +120,6 @@ prompt_context() {
 
   # if [[ -n "$SSH_CLIENT" ]]; then
   #   # prompt_segment NONE default "%(!.%{%F{red}%}.)%{$fg_bold{magenta}%}$USER@%{%F{green}%}%m%{%F{default}%}:"
-
   # fi
 }
 
