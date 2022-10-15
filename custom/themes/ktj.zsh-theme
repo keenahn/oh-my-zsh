@@ -116,7 +116,11 @@ prompt_context() {
     username=$USER
   fi
 
-  prompt_segment NONE NONE "%(%{%F{red}%})%{$fg[magenta]%}$username%{$fg[white]%}@%{$fg[green]%}${hostname}%{$fg[white]%}:"
+  if [[ $USER == 'root' ]]; then
+    prompt_segment NONE NONE "%{$fg[red]%}$username%{$fg[white]%}@%{$fg[red]%}${hostname}%{$fg[white]%}:"
+  else
+    prompt_segment NONE NONE "%{$fg[magenta]%}$username%{$fg[white]%}@%{$fg[green]%}${hostname}%{$fg[white]%}:"
+  fi
 
   # if [[ -n "$SSH_CLIENT" ]]; then
   #   # prompt_segment NONE default "%(!.%{%F{red}%}.)%{$fg_bold{magenta}%}$USER@%{%F{green}%}%m%{%F{default}%}:"
