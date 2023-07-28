@@ -148,7 +148,8 @@ prompt_git() {
   local ref dirty mode repo_path
 
   # TODO: generalize this
-  if [ "${PWD%%/dotfiles*}" != "$PWD" ] ||  [ "${PWD%%/universal-todo*}" != "$PWD" ]; then;
+  # if [ -d "${PWD}/.git-crypt"  ]; then;
+  if [ "${PWD%%/dotfiles*}" != "$PWD" ] || [ "${PWD%%/universal-todo*}" != "$PWD" ]; then;
     return
   fi
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
@@ -218,8 +219,8 @@ prompt_virtualenv() {
 }
 
 # Status:
-# - was there an error
-# - am I root
+# - was there an error?
+# - am I root?
 # - are there background jobs?
 prompt_status() {
   local symbols
