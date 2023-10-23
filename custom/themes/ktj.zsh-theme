@@ -271,6 +271,8 @@ prompt_node() {
       mode=" 🧶"
     elif [[ -e "${root_path}/pnpm-lock.yaml" ]]; then
       mode=" 🔗"
+    elif [[ -e "${root_path}/pyproject.toml" ]]; then
+      mode=" 🐍"
     fi
     echo -ne "$mode"
   fi
