@@ -278,6 +278,22 @@ prompt_node() {
   fi
 }
 
+prompt_db_environment() {
+  root_path=$(git rev-parse --show-toplevel 2>/dev/null)
+  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    if [[ -e "${root_path}/.env" ]]; then
+      database_url=$(grep -v '^#' "${root_path}/.env" | grep 'DATABASE_URL_NON_POOLING' | tail -n 1)
+      if [[ -n "$database_url" ]]; then
+        if [[ $database_url == *mana-copilot-app-data-staging* ]]; then
+          echo -ne "%{$fg[red]%}🐘 staging%{$fg[reset]%}"
+        elif [[ $database_url == *mana-copilot-app-data* ]]; then
+          echo -ne "%{$fg[red]%}🐘 prod%{$fg[reset]%}"
+        fi
+      fi
+    fi
+  fi
+}
+
 prompt_node_version() {
   if which node &> /dev/null; then
     echo -ne "%{$fg_bold[green]%}⬢ $(node -v | cut -d'.' -f1 | cut -c2-3)%{$reset_color%}"
@@ -317,9 +333,10 @@ build_prompt() {
   prompt_time
   prompt_node
   # prompt_node_version
+  prompt_db_environment
   prompt_git
   prompt_status
-  prompt_seated_db
+  # prompt_seated_db
 }
 
 init
