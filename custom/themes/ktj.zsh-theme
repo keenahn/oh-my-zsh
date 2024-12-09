@@ -238,6 +238,7 @@ prompt_status() {
   fi
 }
 
+# Deprecated, use convertms instead
 convertsecs() {
   ((h=${1}/3600))
   ((m=(${1}%3600)/60))
@@ -253,6 +254,29 @@ convertsecs() {
     printf $s
   fi
 }
+
+convertms() {
+  if (( ${1} < 1000 )); then
+    printf "%dms" ${1}
+  else
+    t=${1}/1000
+    ((h=$t/3600))
+    ((m=($t%3600)/60))
+    ((s=$t%60))
+    ((ms=${1}%1000))
+
+    if (($h > 0)); then
+      printf "%02d:%02d:%02d" $h $m $s
+    elif (($m > 0)); then
+      printf "%02d:%02d" $m $s
+    elif (($s == 0)); then
+      printf "0ms"
+    elif (($s > 0)); then
+      printf "%d.%03ds" $s $ms
+    fi
+  fi
+}
+
 
 prompt_time() {
   # See: https://superuser.com/a/943916
@@ -311,13 +335,19 @@ prompt_seated_db() {
 
 # Show the execution time of the last command in the righthand side prompt
 function preexec() {
-  timer=${timer:-$SECONDS}
+  # timer=${timer:-$SECONDS}
+  ms=`date +%s%3N`
+  timer=${timer:-$ms}
+
 }
 
 function precmd() {
   if [ $timer ]; then
-    timer_show=$(($SECONDS - $timer))
-    export RPROMPT="$(convertsecs $timer_show)"
+    ms=`date +%s%3N`
+    timer_show=$(($ms - $timer))
+    a="$(convertms $timer_show)"
+
+    export RPROMPT="$a"
     unset timer
   fi
 }
