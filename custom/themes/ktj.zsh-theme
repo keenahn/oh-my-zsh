@@ -51,6 +51,9 @@ DISABLE_PATTERNS=("${(b)HOME}/s/projects/dotfiles*" "${(b)HOME}/s/projects/unive
 
 init() {
   setopt promptsubst
+
+  # See https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#vcs_005finfo-Quickstart
+  # For full info
   autoload -Uz vcs_info
 
   zstyle ':vcs_info:*' enable git
@@ -65,8 +68,12 @@ init() {
   # %m In case of Git, show information about stashes
   # %u Show unstaged changes in the repository
   # %c Show staged changes in the repository
+
   zstyle ':vcs_info:*' formats '%u%c'
   zstyle ':vcs_info:*' actionformats '%u%c'
+
+  # zstyle ':vcs_info:*' formats '%u%c'
+  # zstyle ':vcs_info:*' actionformats '%u%c'
   zstyle ':vcs_info:*' disable-patterns $DISABLE_PATTERNS
 }
 
@@ -302,34 +309,26 @@ prompt_node() {
   fi
 }
 
-prompt_db_environment() {
-  root_path=$(git rev-parse --show-toplevel 2>/dev/null)
-  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    if [[ -e "${root_path}/.env" ]]; then
-      database_url=$(grep -v '^#' "${root_path}/.env" | grep 'DATABASE_URL_NON_POOLING' | tail -n 1)
-      if [[ -n "$database_url" ]]; then
-        if [[ $database_url == *mana-copilot-app-data-staging* ]]; then
-          echo -ne "%{$fg[red]%}🐘 staging%{$fg[reset]%}"
-        elif [[ $database_url == *mana-copilot-app-data* ]]; then
-          echo -ne "%{$fg[red]%}🐘 prod%{$fg[reset]%}"
-        fi
-      fi
-    fi
-  fi
-}
+# Deprecated, fix up to use with dsda
+# prompt_db_environment() {
+#   root_path=$(git rev-parse --show-toplevel 2>/dev/null)
+#   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+#     if [[ -e "${root_path}/.env" ]]; then
+#       database_url=$(grep -v '^#' "${root_path}/.env" | grep 'DATABASE_URL_NON_POOLING' | tail -n 1)
+#       if [[ -n "$database_url" ]]; then
+#         if [[ $database_url == *mana-copilot-app-data-staging* ]]; then
+#           echo -ne "%{$fg[red]%}🐘 staging%{$fg[reset]%}"
+#         elif [[ $database_url == *mana-copilot-app-data* ]]; then
+#           echo -ne "%{$fg[red]%}🐘 prod%{$fg[reset]%}"
+#         fi
+#       fi
+#     fi
+#   fi
+# }
 
 prompt_node_version() {
   if which node &> /dev/null; then
     echo -ne "%{$fg_bold[green]%}⬢ $(node -v | cut -d'.' -f1 | cut -c2-3)%{$reset_color%}"
-  fi
-}
-
-prompt_seated_db() {
-  SUB='sgpostgres'
-  if [[ "$SEATED_DATABASE_URL" == *"$SUB"* ]]; then
-    # Use nerd fonts if this doesn't  show up
-    # https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
-    echo -ne "%{$fg_bold[red]%} prod%{$reset_color%}"
   fi
 }
 
@@ -352,7 +351,6 @@ function precmd() {
   fi
 }
 
-
 ## Main prompt
 build_prompt() {
   RETVAL=$?
@@ -363,7 +361,6 @@ build_prompt() {
   prompt_time
   prompt_node
   # prompt_node_version
-  prompt_db_environment
   prompt_git
   prompt_status
   # prompt_seated_db
