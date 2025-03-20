@@ -208,7 +208,16 @@ prompt_git() {
 # else, show all segments (%4~)
 
 prompt_dir() {
-  prompt_segment NONE blue '%~' # '%(5~|%-1~/…/%3~|%4~) '
+  prompt_segment NONE blue '%~'
+}
+
+prompt_spwd() {
+  if [[ $PWD == $HOME ]] ;
+  then
+    # do nothing
+  else
+    prompt_segment NONE 8 " (`spwd`)"
+  fi
 }
 
 # prompt_direnv() {
@@ -345,8 +354,9 @@ function precmd() {
     ms=`date +%s%3N`
     timer_show=$(($ms - $timer))
     a="$(convertms $timer_show)"
-
     export RPROMPT="$a"
+    # a="$(prompt_segment NONE white $a)"
+    # export RPROMPT="`prompt_spwd` $a"
     unset timer
   fi
 }
