@@ -123,6 +123,9 @@ prompt_context() {
     username=$USER
   fi
 
+  # Italic
+  # %{\x1b[3m%} text to italicize  %{\x1b[0m%}
+
   if [[ $USER == 'root' ]]; then
     prompt_segment NONE NONE "%{$fg[red]%}$username%{$fg[white]%}@%{$fg[red]%}${hostname}%{$fg[white]%}:"
   else
