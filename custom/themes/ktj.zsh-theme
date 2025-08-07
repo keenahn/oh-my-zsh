@@ -111,17 +111,12 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local hostname username
-  if [[ `hostname` == Keenahns-MBP ]]; then
-    hostname="mbp"
-  else
-    hostname="%m"
-  fi
 
-  if [[ $USER == 'keenahn' ]]; then
-    username="k"
-  else
-    username=$USER
-  fi
+  hostname="%m"
+  # [[ `hostname` == Keenahns-MBP ]] && hostname="mbp"
+
+  username=$USER
+  [[ $USER == 'keenahn' ]] && username="k"
 
   # Italic
   # %{\x1b[3m%} text to italicize  %{\x1b[0m%}
@@ -162,19 +157,18 @@ prompt_git() {
   if [ "${PWD%%/dotfiles*}" != "$PWD" ] || [ "${PWD%%/universal-todo*}" != "$PWD" ]; then;
     return
   fi
-  repo_path=$(git rev-parse --git-dir 2>/dev/null)
-
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    echo -n " "
+    # repo_path=$(git rev-parse --git-dir 2>/dev/null)
+    repo_path=".git"
     # dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
-    echo -n " "
-
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
-      mode=" <B>"
+      mode=" <B> "
     elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
-      mode=" >M<"
+      mode=" >M< "
     elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
-      mode=" >R>"
+      mode=" >R> "
     fi
 
     vcs_info
@@ -215,12 +209,7 @@ prompt_dir() {
 }
 
 prompt_spwd() {
-  if [[ $PWD == $HOME ]] ;
-  then
-    # do nothing
-  else
-    prompt_segment NONE 8 " (`spwd`)"
-  fi
+  [[ $PWD != $HOME ]] && prompt_segment NONE 8 " (`spwd`)"
 }
 
 # prompt_direnv() {
@@ -349,7 +338,6 @@ function preexec() {
   # timer=${timer:-$SECONDS}
   ms=`date +%s%3N`
   timer=${timer:-$ms}
-
 }
 
 function precmd() {
@@ -357,9 +345,11 @@ function precmd() {
     ms=`date +%s%3N`
     timer_show=$(($ms - $timer))
     a="$(convertms $timer_show)"
-    export RPROMPT="$a"
-    # a="$(prompt_segment NONE white $a)"
+
+    # Uncomment the below to get the spwd as part of the right prompt
     # export RPROMPT="`prompt_spwd` $a"
+    export RPROMPT="$a"
+
     unset timer
   fi
 }
@@ -367,16 +357,13 @@ function precmd() {
 ## Main prompt
 build_prompt() {
   RETVAL=$?
-  # prompt_virtualenv
-  # prompt_tmux_window
   prompt_context
   prompt_dir
   prompt_time
-  prompt_node
+  # prompt_node
   # prompt_node_version
   prompt_git
   prompt_status
-  # prompt_seated_db
 }
 
 init
